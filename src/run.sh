@@ -25,3 +25,14 @@ echo "Running..."
 
 #Run main
 java Main
+
+echo "...Finished"
+
+#remove all class files to clean directory
+cd ..
+find . -type f -path "./src/*/*" -name "*.class" -delete
+cd src
+rm Main.class
+
+
+echo "cleaned"
