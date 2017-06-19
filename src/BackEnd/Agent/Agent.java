@@ -88,6 +88,14 @@ public class Agent {
     public void getPercepts(ArrayList<String> objects, ArrayList<float []> positions){
         this.obj_names = objects;
         this.obj_positions = positions;
+
+        //NOTE: this should technically be in the "see" method but fits in here too
+        //if we see an object we also believe that we see it
+        if (obj_names.size() > 0){
+            for (int i = 0; i < obj_names.size(); i++){
+                addBelief("see("+obj_names.get(i)+")");
+            }
+        }
     }
 
     //convert percepts to beliefs
@@ -127,6 +135,12 @@ public class Agent {
         if (beliefs.contains(belief)) {
             beliefs.remove(belief);
         }
+    }
+
+    //gets new beliefs. Removes all previous beliefs so no object permanence is possible
+    public void beliefRevision(){
+        beliefs.clear();
+        see();
     }
 
     //get 2d representation for the front end
