@@ -21,7 +21,7 @@ public class Main {
         Base bs = new Base(800, tom_e.get2DAsteroids(),agents2d);
         while(true) {
             bs.update();
-            x.agentBehave();
+            //x.agentBehave();
         }
     }
 

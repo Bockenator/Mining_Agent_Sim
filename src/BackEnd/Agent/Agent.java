@@ -32,8 +32,9 @@ public class Agent {
     private ArrayList<String> desires;
 
     //these map actual percepts
-    private ArrayList<float []> obj_positions;
-    private ArrayList<String> obj_names;
+    HashMap<String, float []> world_objects;
+    //private ArrayList<float []> obj_positions;
+    //private ArrayList<String> obj_names;
 
     public Agent() {
         init();
@@ -108,15 +109,15 @@ public class Agent {
     }
 
     //percepts come in the form a list of object name (in the future might turn into unique ids) and positions
-    public void getPercepts(ArrayList<String> objects, ArrayList<float []> positions){
-        this.obj_names = objects;
-        this.obj_positions = positions;
+    public void getPercepts(HashMap<String, float []> world_obj){
+        this.world_objects = world_obj;
 
         //NOTE: this should technically be in the "see" method but fits in here too
         //if we see an object we also believe that we see it
-        if (obj_names.size() > 0){
-            for (int i = 0; i < obj_names.size(); i++){
-                addBelief("see("+obj_names.get(i)+")");
+        if (world_objects.size() > 0){
+            String [] object_names = (String[]) (world_objects.keySet()).toArray();
+            for (int i = 0; i < object_names.length; i++){
+                addBelief("see("+object_names[i]+")");
             }
         }
     }
@@ -132,9 +133,10 @@ public class Agent {
         }
 
         //object beliefs
-        if (obj_positions.size() > 0){
-            for (int i = 0; i < obj_positions.size(); i++){
-               checkRanges(obj_positions.get(i));
+        if (world_objects.size() > 0){
+            String [] object_names = (String[]) (world_objects.keySet()).toArray();
+            for (int i = 0; i < world_objects.size(); i++){
+               checkRanges(world_objects.get(object_names[i]));
             }
         }
 
@@ -168,9 +170,9 @@ public class Agent {
 
 
     //if we have an item in the action queue the agent acts otherwise we replan (getting new percepts etc)
-    public void agentBehave(ArrayList<String> objects, ArrayList<float []> positions){
+    public void agentBehave(HashMap<String, float []> world_obj){
         if (action_queue.size() < 1){
-            getPercepts(objects, positions);
+            getPercepts(world_obj);
             beliefRevision();
             //once plan generation works we will be able to generate entire plans using (generatePlan)
             action_queue.add(Inference.infer(beliefs));
@@ -182,6 +184,14 @@ public class Agent {
 
     }
 
+    //for now this seems superfluous but as more different kind of objects are added this makes it easy to extract
+    //the type of objects
+    public String extractObj(String object_name){
+        if(object_name.substring(0,8).equals("Asteroid")){
+            return "Asteroid";
+        }
+        return null;
+    }
 
     //get 2d representation for the front end
     public int[] get2DAgent(){
