@@ -5,34 +5,35 @@ import BackEnd.Logic.*;
 import java.util.*;
 /**
  * Created by tom on 05/06/17.
+ * Contains the Agent architecture and logic stuff for a basic mining agent
  */
 public class Agent {
     //should probably all be private
     //positions
-    float x,y,z;
+    private float x,y,z;
     //directional speeds
-    float x_sp,y_sp,z_sp;
-    float speed;
-    float [] target_pos;
+    private float x_sp,y_sp,z_sp;
+    private float speed;
+    private float [] target_pos;
 
 
-    float sense_range;
-    float mining_range;
-    float max_cargo;
-    float cargo;
+    private float sense_range;
+    private float mining_range;
+    private float max_cargo;
+    private float cargo;
 
     //this is the plan (we take the head of the queue every time to get the next action in the plan)
-    ArrayList<Action> action_queue;
+    private ArrayList<Action> action_queue;
 
     //array for beliefs for logic inference
-    ArrayList<String> beliefs;
+    private ArrayList<String> beliefs;
 
     //array for desires to be turned into intentions
-    ArrayList<String> desires;
+    private ArrayList<String> desires;
 
     //these map actual percepts
-    ArrayList<float []> obj_positions;
-    ArrayList<String> obj_names;
+    private ArrayList<float []> obj_positions;
+    private ArrayList<String> obj_names;
 
     public Agent() {
         init();
@@ -54,7 +55,7 @@ public class Agent {
     }
 
     //we move by trying to go to target position (obstacle avoidance and collision detection not implemented)
-    public void move(){
+    private void move(){
         //get total distance
         float distance = (float)Math.sqrt(((target_pos[0]-x)*(target_pos[0]-x)) + ((target_pos[1]-y)*(target_pos[1]-y))
                 + ((target_pos[2]-z)*(target_pos[2]-z)));
@@ -77,19 +78,18 @@ public class Agent {
 
     //NOTE: see(Asteroid) can be put here or when we add the object to the arraylist in getPercepts
     //check if any asteroids are in range to be mined
-    public boolean checkRanges(float [] obj_pos){
+    private void checkRanges(float [] obj_pos){
         //Euclidean distance
         float distance = (float)Math.sqrt(((obj_pos[0]-x)*(obj_pos[0]-x)) + ((obj_pos[1]-y)*(obj_pos[1]-y)) +
                 ((obj_pos[2]-z)*(obj_pos[2]-z)));
         if (distance <= mining_range){
             addBelief("within_range(Asteroid)");
-            return true;
+
         }
-        return false;
     }
 
     //used for doing actions (from action queue)
-    public void doAct(Action a){
+    private void doAct(Action a){
         switch(a){
             case MOVE:
                 move();
@@ -122,7 +122,7 @@ public class Agent {
     }
 
     //convert percepts to beliefs
-    public void see(){
+    private void see(){
         //cargo beliefs
         if (cargo > 0) {
             addBelief("have_cargo");
@@ -146,7 +146,7 @@ public class Agent {
     }
 
     //method for adding world beliefs (we only add a belief if it isn't there already)
-    public void addBelief(String belief){
+    private void addBelief(String belief){
         if (!(beliefs.contains(belief))){
             beliefs.add(belief);
         }
@@ -166,9 +166,25 @@ public class Agent {
         see();
     }
 
+
+    //if we have an item in the action queue the agent acts otherwise we replan (getting new percepts etc)
+    public void agentBehave(ArrayList<String> objects, ArrayList<float []> positions){
+        if (action_queue.size() < 1){
+            getPercepts(objects, positions);
+            beliefRevision();
+            //once plan generation works we will be able to generate entire plans using (generatePlan)
+            action_queue.add(Inference.infer(beliefs));
+        }
+        else {
+            doAct(action_queue.get(0));
+            action_queue.remove(0);
+        }
+
+    }
+
+
     //get 2d representation for the front end
     public int[] get2DAgent(){
-        int[] agent =  {(int)x,(int)y};
-        return agent;
+        return new int [] {(int)x,(int)y};
     }
 }
