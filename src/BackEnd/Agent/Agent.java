@@ -12,6 +12,10 @@ public class Agent {
     float x,y,z;
     //directional speeds
     float x_sp,y_sp,z_sp;
+    float speed;
+    float [] target_pos;
+
+
     float sense_range;
     float mining_range;
     float max_cargo;
@@ -22,6 +26,9 @@ public class Agent {
 
     //array for beliefs for logic inference
     ArrayList<String> beliefs;
+
+    //array for desires to be turned into intentions
+    ArrayList<String> desires;
 
     //these map actual percepts
     ArrayList<float []> obj_positions;
@@ -36,6 +43,7 @@ public class Agent {
         this.x = 0;
         this.y = 0;
         this.z = 0;
+        this.speed = 10;
         this.x_sp = 0;
         this.y_sp = 0;
         this.z_sp = 0;
@@ -45,8 +53,23 @@ public class Agent {
         this.max_cargo = 100;
     }
 
-    //method to update positions
+    //we move by trying to go to target position (obstacle avoidance and collision detection not implemented)
     public void move(){
+        //get total distance
+        float distance = (float)Math.sqrt(((target_pos[0]-x)*(target_pos[0]-x)) + ((target_pos[1]-y)*(target_pos[1]-y))
+                + ((target_pos[2]-z)*(target_pos[2]-z)));
+
+        //get x y z distances
+        float x_d = (float)Math.sqrt((target_pos[0]-x)*(target_pos[0]-x));
+        float y_d = (float)Math.sqrt((target_pos[1]-y)*(target_pos[1]-y));
+        float z_d = (float)Math.sqrt((target_pos[2]-z)*(target_pos[2]-z));
+
+        //adjust based on distance
+        x_sp = (x_d/distance)*speed;
+        y_sp = (y_d/distance)*speed;
+        y_sp = (z_d/distance)*speed;
+
+        //move
         x+=x_sp;
         y+=y_sp;
         z+=z_sp;

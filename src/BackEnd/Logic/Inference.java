@@ -49,7 +49,9 @@ public class Inference {
     }
 
     //generate plans
-    /*public Action[] gen_plan(String[] kb){
+    public static ArrayList<Action> gen_plan(String[] kb){
+        ArrayList<Action> plan = new ArrayList<Action>();
 
-    }*/
+        return plan;
+    }
 }
