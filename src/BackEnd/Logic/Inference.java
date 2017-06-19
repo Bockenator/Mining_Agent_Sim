@@ -25,7 +25,7 @@ public class Inference {
     }
 
     //basic exhaustive kb query-ing
-    public static boolean query_kb(String[] query, ArrayList<String> kb){
+    public static boolean queryKB(String[] query, ArrayList<String> kb){
         for (int i = 0; i<query.length; i++){
             if (!(kb.contains(query[i]))){
                 return false;
@@ -41,7 +41,7 @@ public class Inference {
         for (int i = 0; i<rules.size(); i++){
             //query the kb on all pre-conditions for all rules
             //if any can be satisfied return the action
-            if (query_kb(rules.get(i).precond, kb)){
+            if (queryKB(rules.get(i).precond, kb)){
                 return rules.get(i).act;
             }
         }

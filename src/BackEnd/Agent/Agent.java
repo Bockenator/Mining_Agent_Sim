@@ -8,13 +8,17 @@ import java.util.*;
  */
 public class Agent {
     //should probably all be private
+    //positions
     float x,y,z;
+    //directional speeds
     float x_sp,y_sp,z_sp;
     float sense_range;
     float mining_range;
     float max_cargo;
     float cargo;
-    Action[] action_queue;
+
+    //this is the plan (we take the head of the queue every time to get the next action in the plan)
+    ArrayList<Action> action_queue;
 
     //array for beliefs for logic inference
     ArrayList<String> beliefs;
@@ -48,12 +52,14 @@ public class Agent {
         z+=z_sp;
     }
 
+    //NOTE: see(Asteroid) can be put here or when we add the object to the arraylist in getPercepts
     //check if any asteroids are in range to be mined
-    public boolean check_range(float [] obj_pos){
+    public boolean checkRanges(float [] obj_pos){
+        //Euclidean distance
         float distance = (float)Math.sqrt(((obj_pos[0]-x)*(obj_pos[0]-x)) + ((obj_pos[1]-y)*(obj_pos[1]-y)) +
                 ((obj_pos[2]-z)*(obj_pos[2]-z)));
-
         if (distance <= mining_range){
+            addBelief("within_range(Asteroid)");
             return true;
         }
         return false;
@@ -79,32 +85,44 @@ public class Agent {
     }
 
     //percepts come in the form a list of object name (in the future might turn into unique ids) and positions
-    public void get_percepts(ArrayList<String> objects, ArrayList<float []> positions){
+    public void getPercepts(ArrayList<String> objects, ArrayList<float []> positions){
         this.obj_names = objects;
         this.obj_positions = positions;
     }
 
-    //convert percepts to beliefs#
+    //convert percepts to beliefs
     public void see(){
+        //cargo beliefs
         if (cargo > 0) {
-            add_belief("have_cargo");
+            addBelief("have_cargo");
             if (cargo == max_cargo) {
-                add_belief("cargo_full");
+                addBelief("cargo_full");
             }
         }
 
+        //object beliefs
+        if (obj_positions.size() > 0){
+            for (int i = 0; i < obj_positions.size(); i++){
+               checkRanges(obj_positions.get(i));
+            }
+        }
+
+        //position beliefs
+        if ((x == 0) && (y == 0) && (z == 0)){
+            addBelief("at_base");
+        }
 
     }
 
     //method for adding world beliefs (we only add a belief if it isn't there already)
-    public void add_belief(String belief){
+    public void addBelief(String belief){
         if (!(beliefs.contains(belief))){
             beliefs.add(belief);
         }
     }
 
     //method for removing beliefs (just for clarity)
-    public void remove_belief(String belief){
+    public void removeBelief(String belief){
         //if condition is just a precaution to avoid null-pointer errors
         if (beliefs.contains(belief)) {
             beliefs.remove(belief);
