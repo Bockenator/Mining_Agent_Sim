@@ -19,7 +19,10 @@ public class Main {
 
         agents2d[0] = x.get2DAgent();
         Base bs = new Base(800, tom_e.get2DAsteroids(),agents2d);
-        bs.update();
+        while(true) {
+            bs.update();
+            x.agentBehave();
+        }
     }
 
 }

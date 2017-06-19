@@ -1,5 +1,7 @@
 package BackEnd.Environment;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 /**
  * Created by tom on 05/06/17.
@@ -39,6 +41,50 @@ public class Environment {
         this.field = ast;
     }
 
+
+    //get list of objects in world (just asteroids for now)
+    public ArrayList<String> getObjects(){
+        ArrayList<String> objs = new ArrayList<>();
+        for (int i = 0; i < field.length; i++){
+            objs.add("Asteroid");
+        }
+        return objs;
+    }
+
+    //get list of the positions of the objects in the world
+    public ArrayList<float []> getObjectPos(){
+        ArrayList<float []> o_pos = new ArrayList<>();
+        float [] pos = new float [3];
+        for (int i = 0; i < field.length; i++){
+            pos[0] = field[i].x;
+            pos[1] = field[i].y;
+            pos[2] = field[i].z;
+            o_pos.add(pos);
+        }
+        return o_pos;
+    }
+
+    //gets all objects within an agents sense range
+    public HashMap<String, float[]> getAllInRange(float range, float [] obj_pos){
+        HashMap<String, float[]> objs = new HashMap<>();
+        float [] pos = new float [3];
+        String name;
+        float distance;
+        for (int i = 0; i < field.length; i++){
+            //euclidean distance and only add those in range
+            //NOTE: could replace with (x<range && y<range && z<range)
+            distance = (float)Math.sqrt(((obj_pos[0]-field[i].x)*(obj_pos[0]-field[i].x)) + ((obj_pos[1]-field[i].y)
+            *(obj_pos[1]-field[i].y)) + ((obj_pos[2]-field[i].z)*(obj_pos[2]-field[i].z)));
+            if (distance <= range) {
+                name = "Asteroid" + i;
+                pos[0] = field[i].x;
+                pos[1] = field[i].y;
+                pos[2] = field[i].z;
+                objs.put(name, pos);
+            }
+        }
+        return objs;
+    }
 
     //method to convert the asteroid field into a 2d representation (with no z coordinate being used at all)
     public int[][] get2DAsteroids(){
