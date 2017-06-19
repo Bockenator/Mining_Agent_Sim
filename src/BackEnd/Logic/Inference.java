@@ -45,7 +45,7 @@ public class Inference {
                 return rules.get(i).act;
             }
         }
-        return Action.MOVE;
+        return Action.DEFAULT;
     }
 
     //generate plans

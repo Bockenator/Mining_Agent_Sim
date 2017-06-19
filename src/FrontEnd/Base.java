@@ -21,7 +21,7 @@ public class Base extends JFrame {
         this.setVisible(true);
     }
 
-    public void update(){
-        panel2D.repaint();
+    public void update(int[][] asteroids, int[][] agents){
+        panel2D.update(asteroids, agents);
     }
 }

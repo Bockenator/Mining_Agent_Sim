@@ -33,8 +33,7 @@ public class Agent {
 
     //these map actual percepts
     HashMap<String, float []> world_objects;
-    //private ArrayList<float []> obj_positions;
-    //private ArrayList<String> obj_names;
+
 
     public Agent() {
         init();
@@ -42,6 +41,10 @@ public class Agent {
 
     //init method
     private void init(){
+        this.action_queue = new ArrayList<>();
+        this.beliefs = new ArrayList<>();
+        this.desires = new ArrayList<>();
+        this.world_objects = new HashMap<>();
         this.x = 0;
         this.y = 0;
         this.z = 0;
@@ -89,21 +92,57 @@ public class Agent {
         }
     }
 
+    private void mine(){
+
+    }
+
+    private void dumpCargo(){
+        cargo = 0;
+        removeBelief("have_cargo");
+        removeBelief("cargo_full");
+    }
+
+    private void returnToBase(){
+        target_pos = new float [] {0,0,0};
+        move();
+    }
+
+    private void goTo(){
+        String [] keys = (String [])world_objects.keySet().toArray();
+        target_pos = world_objects.get(keys[0]);
+        move();
+    }
+
+    private void defaultMove(){
+        target_pos = new float [] {100, 100, 100};
+        move();
+    }
+
     //used for doing actions (from action queue)
     private void doAct(Action a){
         switch(a){
+            case RETURN_TO_BASE:
+                returnToBase();
+                break;
+
+            case GO_TO:
+                goTo();
+                break;
+
             case MOVE:
                 move();
                 break;
 
             case MINE:
+                mine();
                 break;
 
             case DUMP_CARGO:
+                dumpCargo();
                 break;
 
             default:
-                //idle
+                defaultMove();
                 break;
         }
     }
@@ -171,6 +210,7 @@ public class Agent {
 
     //if we have an item in the action queue the agent acts otherwise we replan (getting new percepts etc)
     public void agentBehave(HashMap<String, float []> world_obj){
+        System.out.println("X: "+x+" Y: "+y+" Z: "+z);
         if (action_queue.size() < 1){
             getPercepts(world_obj);
             beliefRevision();
@@ -191,6 +231,10 @@ public class Agent {
             return "Asteroid";
         }
         return null;
+    }
+
+    public float[] getPosition(){
+        return new float [] {x,y,z};
     }
 
     //get 2d representation for the front end

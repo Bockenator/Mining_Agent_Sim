@@ -25,8 +25,10 @@ public class Env2D extends JPanel {
         setBackground(Color.BLACK);
     }
 
-    public void update(){
-        //JUST USE "repaint()" INSTEAD?
+    public void update(int[][] asteroids, int[][] agents){
+        this.asteroids = asteroids;
+        this.agents = agents;
+        repaint();
     }
 
     @Override
