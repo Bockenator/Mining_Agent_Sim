@@ -48,7 +48,7 @@ public class Agent {
         this.x = 0;
         this.y = 0;
         this.z = 0;
-        this.speed = 10;
+        this.speed = 1;
         this.x_sp = 0;
         this.y_sp = 0;
         this.z_sp = 0;
@@ -64,15 +64,15 @@ public class Agent {
         float distance = (float)Math.sqrt(((target_pos[0]-x)*(target_pos[0]-x)) + ((target_pos[1]-y)*(target_pos[1]-y))
                 + ((target_pos[2]-z)*(target_pos[2]-z)));
 
-        //get x y z distances
-        float x_d = (float)Math.sqrt((target_pos[0]-x)*(target_pos[0]-x));
-        float y_d = (float)Math.sqrt((target_pos[1]-y)*(target_pos[1]-y));
-        float z_d = (float)Math.sqrt((target_pos[2]-z)*(target_pos[2]-z));
+        //get x y z distances (we need actual values to determine directions)
+        float x_d = (target_pos[0]-x);
+        float y_d = (target_pos[1]-y);
+        float z_d = (target_pos[2]-z);
 
         //adjust based on distance
         x_sp = (x_d/distance)*speed;
         y_sp = (y_d/distance)*speed;
-        y_sp = (z_d/distance)*speed;
+        z_sp = (z_d/distance)*speed;
 
         //move
         x+=x_sp;
@@ -210,15 +210,16 @@ public class Agent {
 
     //if we have an item in the action queue the agent acts otherwise we replan (getting new percepts etc)
     public void agentBehave(HashMap<String, float []> world_obj){
-        System.out.println("X: "+x+" Y: "+y+" Z: "+z);
         if (action_queue.size() < 1){
             getPercepts(world_obj);
             beliefRevision();
             //once plan generation works we will be able to generate entire plans using (generatePlan)
             action_queue.add(Inference.infer(beliefs));
+            System.out.println("Planning");
         }
         else {
             doAct(action_queue.get(0));
+            System.out.println("X: "+x+" Y: "+y+" Z: "+z+" ACT: "+action_queue.get(0));
             action_queue.remove(0);
         }
 

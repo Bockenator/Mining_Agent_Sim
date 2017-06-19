@@ -11,7 +11,7 @@ public class Main {
     public static void main(String [ ] args) {
         //init the rules
         Inference.init_rules();
-
+        int a = 0;
         int[][] agents2d = new int[1][2];
         Agent x = new Agent();
         Environment tom_e = new Environment(800, 20);
@@ -19,10 +19,13 @@ public class Main {
 
         agents2d[0] = x.get2DAgent();
         Base bs = new Base(800, tom_e.get2DAsteroids(),agents2d);
-        while(true) {
+
+        //basic while loop
+        while(a < 100) {
             agents2d[0] = x.get2DAgent();
             bs.update(tom_e.get2DAsteroids(), agents2d);
             x.agentBehave(tom_e.getAllInRange(10,x.getPosition()));
+            a++;
         }
     }
 
