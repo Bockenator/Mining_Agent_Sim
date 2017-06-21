@@ -52,7 +52,7 @@ public class Agent {
         this.x_sp = 0;
         this.y_sp = 0;
         this.z_sp = 0;
-        this.sense_range = 10;
+        this.sense_range = 200;
         this.mining_range = 5;
         this.cargo = 0;
         this.max_cargo = 100;
@@ -154,9 +154,11 @@ public class Agent {
         //NOTE: this should technically be in the "see" method but fits in here too
         //if we see an object we also believe that we see it
         if (world_objects.size() > 0){
-            String [] object_names = (String[]) (world_objects.keySet()).toArray();
+            Object [] o = (world_objects.keySet()).toArray();
+            String [] object_names = Arrays.copyOf(o, o.length, String[].class);
             for (int i = 0; i < object_names.length; i++){
-                addBelief("see("+object_names[i]+")");
+                //for now we only want the kind of object and not it's unique id
+                addBelief("see("+extractObj(object_names[i])+")");
             }
         }
     }
@@ -173,7 +175,8 @@ public class Agent {
 
         //object beliefs
         if (world_objects.size() > 0){
-            String [] object_names = (String[]) (world_objects.keySet()).toArray();
+            Object [] o = (world_objects.keySet()).toArray();
+            String [] object_names = Arrays.copyOf(o, o.length, String[].class);
             for (int i = 0; i < world_objects.size(); i++){
                checkRanges(world_objects.get(object_names[i]));
             }
