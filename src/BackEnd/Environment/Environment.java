@@ -1,19 +1,25 @@
 package BackEnd.Environment;
 
+import BackEnd.Agent.Agent;
+import BackEnd.Observer;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 /**
  * Created by tom on 05/06/17.
  */
-public class Environment {
+public class Environment extends Observer{
 
     float size;
+    //THIS NEEDS TO BE A HASHMAP SO THAT ASTEROIDS ALWAYS HAVE UNIQUE IDS
     Asteroid[] field;
 
-    public Environment(float size, int no_ast) {
+    public Environment(float size, int no_ast, Agent agent) {
         this.size = size;
         this.field = new Asteroid[no_ast];
+        this.agent = agent;
+        this.agent.setObs(this);
     }
 
     //creates random asteroids to populate the environment
@@ -96,5 +102,13 @@ public class Environment {
             result[i][1] = (int)field[i].y;
         }
         return result;
+    }
+
+    //update method from observer
+    @Override
+    public void update(String id){
+        //THIS HASH SHOULD BE THE USUAL ID HASH
+        HashMap<String, float[]> objs = new HashMap<>();
+        objs.remove(id);
     }
 }

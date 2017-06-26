@@ -1,13 +1,19 @@
 package BackEnd.Agent;
 
-import BackEnd.Environment.Asteroid;
-import BackEnd.Logic.*;
+
+import BackEnd.Logic.Action;
+import BackEnd.Logic.Inference;
+import BackEnd.Observer;
+
 import java.util.*;
 /**
  * Created by tom on 05/06/17.
  * Contains the Agent architecture and logic stuff for a basic mining agent
  */
 public class Agent {
+
+    //Attempt at adding observers to make mining not fucking impossible
+    private Observer env;
     //should probably all be private
     //positions
     private float x,y,z;
@@ -92,8 +98,9 @@ public class Agent {
         }
     }
 
+    //we want to notify the world when we mine something
     private void mine(){
-
+        env.update("ID");
     }
 
     private void dumpCargo(){
@@ -235,6 +242,11 @@ public class Agent {
             return "Asteroid";
         }
         return null;
+    }
+
+    //add the environment observer
+    public void setObs(Observer obs){
+        this.env = obs;
     }
 
     public float[] getPosition(){

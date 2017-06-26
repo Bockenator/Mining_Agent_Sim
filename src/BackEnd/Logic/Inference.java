@@ -21,7 +21,7 @@ public class Inference {
         rules.add(new Rule(new String[] {"at_base","have_cargo"}, new String[] {}, Action.DUMP_CARGO));
         rules.add(new Rule(new String[] {"cargo_full"}, new String[] {}, Action.RETURN_TO_BASE));
         rules.add(new Rule(new String[] {"within_range(Asteroid)"}, new String[] {}, Action.MINE));
-        rules.add(new Rule(new String[] {"see(Asteroid"}, new String[] {}, Action.GO_TO));
+        rules.add(new Rule(new String[] {"see(Asteroid)"}, new String[] {}, Action.GO_TO));
     }
 
     //basic exhaustive kb query-ing
