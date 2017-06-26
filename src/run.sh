@@ -1,6 +1,7 @@
 echo "Beginning Compile..."
 
-#Compile Backend
+#Compile Backend#
+javac Backend/Observer.java
 #Compile Environment
 javac BackEnd/Environment/Asteroid.java
 javac BackEnd/Environment/Environment.java

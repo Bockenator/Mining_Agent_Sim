@@ -12,6 +12,8 @@ import java.util.*;
  */
 public class Agent {
 
+    private String id;
+
     //Attempt at adding observers to make mining not fucking impossible
     private Observer env;
     //should probably all be private
@@ -41,8 +43,9 @@ public class Agent {
     HashMap<String, float []> world_objects;
 
 
-    public Agent() {
+    public Agent(int id_num) {
         init();
+        id = "Agent"+id_num;
     }
 
     //init method

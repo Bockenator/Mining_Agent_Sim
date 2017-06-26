@@ -12,22 +12,26 @@ import java.util.Random;
 public class Environment extends Observer{
 
     float size;
-    //THIS NEEDS TO BE A HASHMAP SO THAT ASTEROIDS ALWAYS HAVE UNIQUE IDS
-    Asteroid[] field;
-
-    public Environment(float size, int no_ast, Agent agent) {
+    //Asteroids have their own unique ids as a field
+    HashMap<String, Asteroid> asteroids = new HashMap<String, Asteroid>();
+    int num_ast;
+    int id_num;
+    public Environment(float size, int num_ast, Agent agent, int id_num) {
         this.size = size;
-        this.field = new Asteroid[no_ast];
+        this.num_ast = num_ast;
         this.agent = agent;
         this.agent.setObs(this);
+        this.id_num = id_num;
     }
 
     //creates random asteroids to populate the environment
     public void initAsteroids(){
-        for (int i = 0; i<field.length; i++){
+        for (int i = 0; i<num_ast; i++){
             //initiate the asteroid with random location
             //NOTE: will need some kind of checking in the future to ensure asteroids don't overlap)
-            field[i] = new Asteroid(randFloat(),randFloat(),randFloat());
+            Asteroid new_ast = new Asteroid(randFloat(),randFloat(),randFloat(),id_num);
+            asteroids.add(new_ast.getID(), new_ast);
+            id_num++;
         }
     }
 
@@ -43,16 +47,16 @@ public class Environment extends Observer{
 
 
     //manually set asteroids (will primarily be used for testing)
-    public void overwriteAst(Asteroid[] ast){
-        this.field = ast;
+    public void overwriteAst(HashMap ast){
+        this.asteroids = ast;
     }
 
 
-    //get list of objects in world (just asteroids for now)
+    //get the ids for the objects in the world (just asteroids for now)
     public ArrayList<String> getObjects(){
         ArrayList<String> objs = new ArrayList<>();
         for (int i = 0; i < field.length; i++){
-            objs.add("Asteroid");
+            objs.add(field[i].getID());
         }
         return objs;
     }
@@ -82,7 +86,7 @@ public class Environment extends Observer{
             distance = (float)Math.sqrt(((obj_pos[0]-field[i].x)*(obj_pos[0]-field[i].x)) + ((obj_pos[1]-field[i].y)
             *(obj_pos[1]-field[i].y)) + ((obj_pos[2]-field[i].z)*(obj_pos[2]-field[i].z)));
             if (distance <= range) {
-                name = "Asteroid" + i;
+                name = field[i].getID();
                 pos[0] = field[i].x;
                 pos[1] = field[i].y;
                 pos[2] = field[i].z;
@@ -107,8 +111,10 @@ public class Environment extends Observer{
     //update method from observer
     @Override
     public void update(String id){
-        //THIS HASH SHOULD BE THE USUAL ID HASH
-        HashMap<String, float[]> objs = new HashMap<>();
-        objs.remove(id);
+        for (Asteroid a : field){
+          if (a.getID().equals(id)){
+            delete(a);
+          }
+        }
     }
 }
